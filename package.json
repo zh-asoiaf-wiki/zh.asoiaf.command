@@ -1,0 +1,18 @@
+{
+  "name": "zh.asoiaf.command", 
+  "version": "0.0.0", 
+  "description": "Functions for one-time actions on zh.asoiaf.wikia.com", 
+  "dependencies": {
+    "nodemw": "*"
+  }, 
+  "repository": {
+    "type": "git", 
+    "url": "git@github.com:zh-asoiaf-wiki/zh.asoiaf.command.git"
+  }, 
+  "keywords": [
+    "zh.asoiaf", "mediawiki"
+  ], 
+  "author": "Chenyang Chen", 
+  "license": "MIT", 
+  "readmeFilename": "README.md"
+}

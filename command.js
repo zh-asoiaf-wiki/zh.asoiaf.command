@@ -56,11 +56,11 @@ module.exports = (function() {
                         var regex = new RegExp(reg);
                         content = content.replace(regex, '');
                         var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';
-                        that.push(pages[id].title, content, summary);
+                        that.push(pages[id].title, content, summary);                           
                       }
                     }
                   }
-                });
+                });              
               }
             }
           }

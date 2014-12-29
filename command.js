@@ -17,15 +17,17 @@ module.exports = (function() {
   command.prototype = {
     hierarchy: function(cat, subcat) {
       var that = this;
+      var ccat = 'Category:' + cat;
+      var csubcat = 'Category:' + subcat;
       wiki.tryBot(function() {
         var pcat = {
           action: 'query', 
           generator: 'categorymembers', 
-          gcmtitle: 'Category:' + subcat, 
+          gcmtitle: csubcat, 
           gcmlimit: '5000', 
           prop: 'categories', 
           cllimit: '5000', 
-          clcategories: 'Category:' + cat
+          clcategories: ccat
         };
         wiki.client.api.call(pcat, function(info, next, data) {
           if (data) {
@@ -36,17 +38,26 @@ module.exports = (function() {
                 var pcontent = {
                   action: 'query', 
                   titles: pages[id].title, 
-                  prop: 'revisions', 
-                  rvprop: 'content'
+                  prop: 'revisions|categories', 
+                  rvprop: 'content|timestamp', // add timestamp to avoid bug
+                  clcategories: csubcat, 
+                  clprop: 'sortkey'
                 };
                 wiki.client.api.call(pcontent, function(info, next, data) {
                   if (data) {
                     var pages = data.query.pages;
                     for (var id in pages) {
-                      var content = pages[id].revisions[0]['*'];
-                      content = content.replace('\n[[Category:' + cat + ']]', '');
-                      var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';
-                      that.push(pages[id].title, content, summary);
+                      var c = pages[id].categories[0]['sortkeyprefix'];
+                      if (c == '*') {
+                        continue;
+                      } else {
+                        var content = pages[id].revisions[0]['*'];
+                        var reg = '\\n\\[\\[' + ccat + '\\|?[\\w|\\*]*\\]\\]';
+                        var regex = new RegExp(reg);
+                        content = content.replace(regex, '');
+                        var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';
+                        that.push(pages[id].title, content, summary);
+                      }
                     }
                   }
                 });

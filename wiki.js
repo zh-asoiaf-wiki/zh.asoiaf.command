@@ -15,8 +15,8 @@ module.exports = (function() {
        if (this.isLogin !== true) {
          var that = this;
          this.client.logIn(function() {
-           callback();
            that.isLogin = true;
+           callback();
          });
        }
      }

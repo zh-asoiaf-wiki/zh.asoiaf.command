@@ -56,7 +56,15 @@ module.exports = (function() {
                         var regex = new RegExp(reg);
                         content = content.replace(regex, '');
                         var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';
-                        that.push(pages[id].title, content, summary);                           
+                        var pedit = {
+                          action: 'edit', 
+                          title: pages[id].title, 
+                          text: content, 
+                          summary: summary, 
+                          bot: 'true', 
+                          basetimestamp: pages[id].revisions[0]['timestamp']
+                        };
+                        that.edit(pedit);
                       }
                     }
                   }
@@ -67,6 +75,25 @@ module.exports = (function() {
         });
       });
     }, 
+    /*
+     * Edit pages via direct-api-call
+     * Customize your parameters for API
+     */
+    edit: function(params, callback) {
+      wiki.client.getToken(params.title, 'edit', function(token) {
+        params.token = token;
+        wiki.client.api.call(params, function(info, next, data) {
+          if (data) {
+            console.log(data);
+            callback && callback(data);
+          }
+        }, 'POST');
+      });
+    }, 
+    /*
+     * Simply use edit in nodemw
+     * NOTICE: no guarantee this edit will base on the last revision of this page.
+     */
     push: function(title, content, summary, callback) {
       wiki.client.edit(title, content, summary, function(res) {
         console.log(res);
@@ -74,7 +101,7 @@ module.exports = (function() {
           callback();
         }
       });
-    }
+    }, 
   };
 
   return command;

@@ -52,7 +52,7 @@ module.exports = (function() {
                         continue;
                       } else {
                         var content = pages[id].revisions[0]['*'];
-                        var reg = '\\n\\[\\[' + ccat + '\\|?[\\w|\\*]*\\]\\]';
+                        var reg = '\\n\\[\\[' + ccat + '\\|?[^\\]]*\\]\\]';
                         var regex = new RegExp(reg);
                         content = content.replace(regex, '');
                         var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';

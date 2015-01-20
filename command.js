@@ -1,5 +1,5 @@
 module.exports = (function() {
-  var Wiki = require('./wiki.js');
+  var Wiki = require('zh.asoiaf.utility').Wiki;
   var wiki = new Wiki({
     config: {
       "server": "zh.asoiaf.wikia.com", 
@@ -11,10 +11,10 @@ module.exports = (function() {
     }
   });
   
-  var command = function() {
+  var Command = function() {
   };
   
-  command.prototype = {
+  Command.prototype = {
     hierarchy: function(cat, subcat) {
       var that = this;
       var ccat = 'Category:' + cat;
@@ -104,5 +104,5 @@ module.exports = (function() {
     }, 
   };
 
-  return command;
+  return Command;
 }());

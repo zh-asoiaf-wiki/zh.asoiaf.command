@@ -3,7 +3,7 @@
   "version": "0.0.0", 
   "description": "Functions for one-time actions on zh.asoiaf.wikia.com", 
   "dependencies": {
-    "nodemw": "*"
+    "zh.asoiaf.utility": "*"
   }, 
   "repository": {
     "type": "git", 
@@ -12,7 +12,7 @@
   "keywords": [
     "zh.asoiaf", "mediawiki"
   ], 
-  "author": "Chenyang Chen", 
+  "author": "AemonTargaryen", 
   "license": "MIT", 
   "readmeFilename": "README.md"
 }

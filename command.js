@@ -1,4 +1,5 @@
 module.exports = (function() {
+  var _ = require('lodash');
   var Wiki = require('zh.asoiaf.utility').Wiki;
   var wiki = new Wiki({
     config: {
@@ -30,47 +31,45 @@ module.exports = (function() {
           clcategories: ccat
         };
         wiki.client.api.call(pcat, function(info, next, data) {
-          if (data) {
-            var pages = data.query.pages;
-            for (var id in pages) {
-              if (pages[id].categories) {
-                // need to correct hierarchy
+          if (info) {
+            var pages = info.pages;
+            _(pages)
+              .filter('categories') // need to correct hierarchy
+              .forEach(function(page) {
                 var pcontent = {
                   action: 'query', 
-                  titles: pages[id].title, 
-                  prop: 'revisions|categories', 
-                  rvprop: 'content|timestamp', // add timestamp to avoid bug
+                  titles: page.title, 
+                  prop: 'revisions|categories',
+                  rvprop: 'content|timestamp',
                   clcategories: csubcat, 
                   clprop: 'sortkey'
                 };
                 wiki.client.api.call(pcontent, function(info, next, data) {
-                  if (data) {
-                    var pages = data.query.pages;
-                    for (var id in pages) {
-                      var c = pages[id].categories[0]['sortkeyprefix'];
-                      if (c == '*') {
-                        continue;
-                      } else {
-                        var content = pages[id].revisions[0]['*'];
+                  if (info) {
+                    var pages = info.pages;
+                    _(pages)
+                      .reject(function(page) { 
+                        return page.categories[0]['sortkeyprefix'] === '*'; 
+                      })
+                      .forEach(function(page) {
+                        var content = page.revisions[0]['*'];
                         var reg = '\\n\\[\\[' + ccat + '\\|?[^\\]]*\\]\\]';
                         var regex = new RegExp(reg);
                         content = content.replace(regex, '');
                         var summary = 'zh.asoiaf.command.hierarchy: [[:Category:' + cat + ']] => [[:Category:' + subcat + ']]';
                         var pedit = {
                           action: 'edit', 
-                          title: pages[id].title, 
+                          title: page.title, 
                           text: content, 
                           summary: summary, 
                           bot: 'true', 
-                          basetimestamp: pages[id].revisions[0]['timestamp']
+                          basetimestamp: page.revisions[0]['timestamp']
                         };
-                        that.edit(pedit);
-                      }
-                    }
+                        that.edit(pedit);                        
+                      });
                   }
-                });              
-              }
-            }
+                });
+              });
           }
         });
       });
@@ -83,9 +82,9 @@ module.exports = (function() {
       wiki.client.getToken(params.title, 'edit', function(token) {
         params.token = token;
         wiki.client.api.call(params, function(info, next, data) {
-          if (data) {
-            console.log(data);
-            callback && callback(data);
+          if (info) {
+            console.log(info);
+            callback && callback(info);
           }
         }, 'POST');
       });
@@ -97,9 +96,7 @@ module.exports = (function() {
     push: function(title, content, summary, callback) {
       wiki.client.edit(title, content, summary, function(res) {
         console.log(res);
-        if (callback) {
-          callback();
-        }
+        callback && callback();
       });
     }, 
   };

@@ -3,6 +3,7 @@
   "version": "0.0.0", 
   "description": "Functions for one-time actions on zh.asoiaf.wikia.com", 
   "dependencies": {
+    "lodash": "*", 
     "zh.asoiaf.utility": "*"
   }, 
   "repository": {

@@ -30,7 +30,7 @@ module.exports = (function() {
           cllimit: '5000', 
           clcategories: ccat
         };
-        wiki.client.api.call(pcat, function(info, next, data) {
+        wiki.client.api.call(pcat, function(err, info, next, data) {
           if (info) {
             var pages = info.pages;
             _(pages)
@@ -44,7 +44,7 @@ module.exports = (function() {
                   clcategories: csubcat, 
                   clprop: 'sortkey'
                 };
-                wiki.client.api.call(pcontent, function(info, next, data) {
+                wiki.client.api.call(pcontent, function(err, info, next, data) {
                   if (info) {
                     var pages = info.pages;
                     _(pages)
@@ -79,9 +79,9 @@ module.exports = (function() {
      * Customize your parameters for API
      */
     edit: function(params, callback) {
-      wiki.client.getToken(params.title, 'edit', function(token) {
+      wiki.client.getToken(params.title, 'edit', function(err, token) {
         params.token = token;
-        wiki.client.api.call(params, function(info, next, data) {
+        wiki.client.api.call(params, function(err, info, next, data) {
           if (info) {
             console.log(info);
             callback && callback(info);
@@ -94,7 +94,7 @@ module.exports = (function() {
      * NOTICE: no guarantee this edit will base on the last revision of this page.
      */
     push: function(title, content, summary, callback) {
-      wiki.client.edit(title, content, summary, function(res) {
+      wiki.client.edit(title, content, summary, function(err, res) {
         console.log(res);
         callback && callback();
       });
